@@ -1,34 +1,37 @@
 import React, {Component} from 'react';
 import './wishlist.css';
+import DataService from '../services/data-service';
+import NotificationService, {NOTIF_WISHLIST_CHANGED} from '../services/notification-service';
 
 import ProductCondensed from '../product-condensed/product-condensed';
+
+let ns = new NotificationService();
 
 class WishList extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      wishList: [
-        {
-          title: "Bologna Killer",
-          price: 23.99,
-          _id: "sdlfkj2k3"
-        },
-        {
-          title: "Foo Man Chu",
-          price: 4.54,
-          _id: "sdlAAj2k3"
-        },
-        {
-          title: "Pipe Dream",
-          price: 100,
-          _id: "sdlfBA3"
-        }
-      ]
-    }
+    this.state = {wishList: []};
 
     // Bind functions
     this.createWishList = this.createWishList.bind(this);
+    this.onWishListChanged = this.onWishListChanged.bind(this);
+  }
+
+  componentDidMount() {
+    // Add the observer name, then the object itself that is observing--this component,
+    // finally the callback when it's time to be notified
+    ns.addObserver(NOTIF_WISHLIST_CHANGED, this, this.onWishListChanged);
+  }
+
+  // Avoid memory leak
+  componentWillUnmout() {
+    ns.removeObserver(this, NOTIF_WISHLIST_CHANGED);
+  }
+
+  // Reset items in the wish list
+  onWishListChanged(newWishList) {
+    this.setState({wishList: newWishList});
   }
 
   createWishList = () => {
