@@ -25,7 +25,7 @@ class WishList extends Component {
   }
 
   // Avoid memory leak
-  componentWillUnmout() {
+  componentWillUnmount() {
     ns.removeObserver(this, NOTIF_WISHLIST_CHANGED);
   }
 
